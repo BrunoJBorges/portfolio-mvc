@@ -3,7 +3,7 @@ require('dotenv').config();
 
 // Middleware para verificar o token JWT
 const authMiddleware = (req, res, next) => {
-  const token = req.headers['authorization'];
+  const token = req.headers['authorization']?.replace('Bearer ', '');;
 
   if (!token) {
     return res.status(403).json({ message: 'Token não fornecido' });
@@ -14,6 +14,7 @@ const authMiddleware = (req, res, next) => {
       return res.status(401).json({ message: 'Token inválido' });
     }
 
+    req.usuarioId = decoded.id;
     req.user = decoded;
     next();
   });

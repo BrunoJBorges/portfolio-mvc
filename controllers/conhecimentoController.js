@@ -1,4 +1,3 @@
-// controllers/conhecimentoController.js
 const { Aluno, Conhecimento } = require('../models');
 
 const cadastrarConhecimento = async (req, res) => {
