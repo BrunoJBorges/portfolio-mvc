@@ -99,9 +99,55 @@ const adicionarDesenvolvedor = async (req, res) => {
   }
 };
 
+// Função para listar todos os projetos
+const listarProjetos = async (req, res) => {
+  try {
+    const projetos = await Projeto.findAll({
+      include: [
+        { model: Aluno, as: 'Alunos', attributes: ['nome'] },              
+        { model: PalavraChave, as: 'PalavraChaves', attributes: ['nome'] } 
+      ],
+    });
+
+    res.json(projetos);
+  } catch (error) {
+    console.error('Erro ao buscar projetos:', error);
+    res.status(500).json({ message: 'Erro ao buscar projetos' });
+  }
+};
+
+const listarProjetosPorPalavraChave = async (req, res) => {
+  const { nome } = req.params;
+
+  try {
+    const projetos = await Projeto.findAll({
+      include: [
+        {
+          model: PalavraChave,
+          as: 'PalavraChaves',
+          where: { nome },
+          attributes: ['nome']
+        },
+        { model: Aluno, as: 'Alunos', attributes: ['nome'] },
+      ],
+    });
+
+    if (projetos.length === 0) {
+      return res.status(404).json({ message: 'Nenhum projeto encontrado para esta palavra-chave' });
+    }
+
+    res.json(projetos);
+  } catch (error) {
+    console.error('Erro ao buscar projetos por palavra-chave:', error);
+    res.status(500).json({ message: 'Erro ao buscar projetos por palavra-chave' });
+  }
+};
+
 module.exports = {
   cadastrarProjeto,
   editarProjeto,
   excluirProjeto,
   adicionarDesenvolvedor,
+  listarProjetos,
+  listarProjetosPorPalavraChave
 };

@@ -91,8 +91,31 @@ const excluirConhecimento = async (req, res) => {
   }
 };
 
+// Função para gerar relatório de conhecimentos
+const gerarRelatorioConhecimentos = async (req, res) => {
+  try {
+    const conhecimentos = await Conhecimento.findAll({
+      include: [{ model: Aluno, as: 'Alunos', through: { attributes: [] } }]
+    });
+
+    // Processando os dados para gerar o relatório
+    const relatorio = conhecimentos.map(conhecimento => {
+      return {
+        conhecimento: conhecimento.nome,
+        totalAlunos: conhecimento.dataValues.Alunos.length // Acessa a contagem de alunos
+      };
+    });
+
+    res.json(relatorio);
+  } catch (error) {
+    console.error('Erro ao gerar relatório de conhecimentos:', error);
+    res.status(500).json({ message: 'Erro ao gerar relatório de conhecimentos' });
+  }
+};
+
 module.exports = { 
   cadastrarConhecimento, 
   editarConhecimento,
-  excluirConhecimento
+  excluirConhecimento,
+  gerarRelatorioConhecimentos
 };
