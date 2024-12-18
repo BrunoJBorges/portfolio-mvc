@@ -1,0 +1,22 @@
+<h1>Relatório de Conhecimentos</h1>
+
+<% if (relatorio && relatorio.length > 0) { %>
+  <table>
+    <thead>
+      <tr>
+        <th>Conhecimento</th>
+        <th>Total de Alunos</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% relatorio.forEach(item => { %>
+        <tr>
+          <td><%= item.conhecimento %></td>
+          <td><%= item.totalAlunos %></td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
+<% } else { %>
+  <p>Não há dados para exibir.</p>
+<% } %>

@@ -109,7 +109,7 @@ const listarProjetos = async (req, res) => {
       ],
     });
 
-    res.json(projetos);
+    res.render('projetos/listarProjetos', { projetos, isFilteredByKeyword: false });
   } catch (error) {
     console.error('Erro ao buscar projetos:', error);
     res.status(500).json({ message: 'Erro ao buscar projetos' });
@@ -136,7 +136,7 @@ const listarProjetosPorPalavraChave = async (req, res) => {
       return res.status(404).json({ message: 'Nenhum projeto encontrado para esta palavra-chave' });
     }
 
-    res.json(projetos);
+    res.render('projetos/listarProjetos', { projetos, isFilteredByKeyword: true, keyword: nome });
   } catch (error) {
     console.error('Erro ao buscar projetos por palavra-chave:', error);
     res.status(500).json({ message: 'Erro ao buscar projetos por palavra-chave' });

@@ -8,7 +8,8 @@ const adminRoutes = require('./routes/adminRoutes')
 
 const app = express();
 
-app.use(express.json());
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
 
 app.use('/alunos', alunoRoutes); // Rotas de aluno
 app.use('/projetos', projetoRoutes); // Rotas de projeto

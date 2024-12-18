@@ -1,0 +1,28 @@
+<h1>Projetos</h1>
+
+<% if (isFilteredByKeyword) { %>
+  <h2>Projetos relacionados à palavra-chave: <%= keyword %></h2>
+<% } else { %>
+  <h2>Todos os Projetos</h2>
+<% } %>
+
+<% if (projetos && projetos.length > 0) { %>
+  <ul>
+    <% projetos.forEach(projeto => { %>
+      <li>
+        <strong><%= projeto.nome %></strong><br>
+        <strong>Resumo do projeto: </strong><%= projeto.resumo %><br>
+        <a href="<%= projeto.linkExterno %>" target="_blank">Link do projeto</a><br>
+        <strong>Alunos:</strong>
+        <ul>
+          <% projeto.Alunos.forEach(aluno => { %>
+            <li><%= aluno.nome %></li>
+          <% }); %>
+        </ul>
+      </li>
+      <br>
+    <% }); %>
+  </ul>
+<% } else { %>
+  <p>Nenhum projeto encontrado.</p>
+<% } %>

@@ -106,7 +106,7 @@ const gerarRelatorioConhecimentos = async (req, res) => {
       };
     });
 
-    res.json(relatorio);
+    res.render('relatorios/relatorioConhecimentos', { relatorio });
   } catch (error) {
     console.error('Erro ao gerar relatório de conhecimentos:', error);
     res.status(500).json({ message: 'Erro ao gerar relatório de conhecimentos' });
