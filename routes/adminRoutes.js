@@ -21,21 +21,21 @@ const {
 const router = express.Router();
 
 // Alunos
-router.post('/alunos', authMiddleware, verificarAdmin, cadastrarAluno);
-router.get('/alunos', authMiddleware, verificarAdmin, listarAlunos);
-router.put('/alunos/:alunoId', authMiddleware, verificarAdmin, editarAluno);
-router.delete('/alunos/:alunoId', authMiddleware, verificarAdmin, excluirAluno);
+router.post('/alunos', cadastrarAluno);
+router.get('/alunos', listarAlunos);
+router.put('/alunos/:alunoId', editarAluno);
+router.delete('/alunos/:alunoId', excluirAluno);
 
 // Palavras-chave
-router.post('/palavras-chave', authMiddleware, verificarAdmin, cadastrarPalavraChave);
+router.post('/palavras-chave', cadastrarPalavraChave);
 router.put('/palavras-chave/:palavraChaveId', editarPalavraChave);
-router.delete('/palavras-chave/:palavraChaveId', authMiddleware, verificarAdmin, excluirPalavraChave);
+router.delete('/palavras-chave/:palavraChaveId', excluirPalavraChave);
 
 // Conhecimentos
-router.post('/conhecimentos', authMiddleware, verificarAdmin, cadastrarConhecimento);
-router.get('/conhecimentos', authMiddleware, verificarAdmin, listarConhecimentos);
-router.put('/conhecimentos/:conhecimentoId', authMiddleware, verificarAdmin, editarConhecimento);
-router.delete('/conhecimentos/:conhecimentoId', authMiddleware, verificarAdmin, excluirConhecimento);
+router.post('/conhecimentos', cadastrarConhecimento);
+router.get('/conhecimentos', listarConhecimentos);
+router.put('/conhecimentos/:conhecimentoId', editarConhecimento);
+router.delete('/conhecimentos/:conhecimentoId', excluirConhecimento);
 
 ///// ROTAS PARA RENDERIZAÇÃO DAS VIEWS - ALUNOS ///// 
 
@@ -98,6 +98,22 @@ router.get('/editarPalavraChave', (req, res) => {
 
 router.get('/excluirPalavraChave', (req, res) => {
   res.render('admin/excluirPalavraChave');
+});
+
+router.get('/cadastrarConhecimentos', (req, res) => {
+  res.render('admin/cadastrarConhecimentos');
+});
+
+router.get('/listarConhecimentos', (req, res) => {
+  res.render('admin/listarConhecimentos');
+});
+
+router.get('/editarConhecimentos', (req, res) => {
+  res.render('admin/editarConhecimentos');
+});
+
+router.get('/excluirConhecimentos', (req, res) => {
+  res.render('admin/excluirConhecimentos');
 });
 
 

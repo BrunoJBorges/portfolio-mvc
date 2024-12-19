@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listar Conhecimentos</title>
+</head>
+<body>
+  <h1>Lista de Conhecimentos</h1>
+
+  <ul id="conhecimentosList"></ul>
+
+  <p id="error" style="color: red;"></p>
+
+  <br>
+  <a href="/admin/dashboard">Voltar para o Dashboard</a>
+
+  <script>
+    // Função para carregar e exibir a lista de conhecimentos
+    async function carregarConhecimentos() {
+      try {
+        const response = await fetch('/admin/conhecimentos', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao carregar conhecimentos');
+        }
+
+        const conhecimentos = await response.json();
+        const conhecimentosList = document.getElementById('conhecimentosList');
+
+        if (conhecimentos.length === 0) {
+          conhecimentosList.innerHTML = '<li>Nenhum conhecimento cadastrado.</li>';
+          return;
+        }
+
+        conhecimentos.forEach(conhecimento => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `ID: ${conhecimento.id} | Nome: ${conhecimento.nome}`;
+          conhecimentosList.appendChild(listItem);
+        });
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+      }
+    }
+
+    // Carrega a lista de conhecimentos ao carregar a página
+    window.onload = carregarConhecimentos;
+  </script>
+</body>
+</html>

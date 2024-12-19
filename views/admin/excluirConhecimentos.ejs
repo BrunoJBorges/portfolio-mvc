@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excluir Conhecimentos</title>
+</head>
+<body>
+  <h1>Excluir Conhecimentos</h1>
+
+  <ul id="conhecimentosList"></ul>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <br>
+  <a href="/admin/dashboard">Voltar para o Dashboard</a>
+
+  <script>
+    async function carregarConhecimentos() {
+      try {
+        const response = await fetch('/admin/conhecimentos', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao carregar conhecimentos');
+        }
+
+        const conhecimentos = await response.json();
+        const conhecimentosList = document.getElementById('conhecimentosList');
+
+        if (conhecimentos.length === 0) {
+          conhecimentosList.innerHTML = '<li>Nenhum conhecimento cadastrado.</li>';
+          return;
+        }
+
+        conhecimentos.forEach(conhecimento => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `ID: ${conhecimento.id} | Nome: ${conhecimento.nome} `;
+
+          const deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Excluir';
+          deleteButton.onclick = () => excluirConhecimento(conhecimento.id);
+
+          listItem.appendChild(deleteButton);
+          conhecimentosList.appendChild(listItem);
+        });
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+      }
+    }
+
+    async function excluirConhecimento(conhecimentoId) {
+      try {
+        const response = await fetch(`/admin/conhecimentos/${conhecimentoId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Conhecimento excluído com sucesso!';
+        document.getElementById('conhecimentosList').innerHTML = ''; // Limpa a lista
+        carregarConhecimentos(); // Recarrega a lista atualizada
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+      }
+    }
+
+    // Carrega a lista de conhecimentos ao carregar a página
+    window.onload = carregarConhecimentos;
+  </script>
+</body>
+</html>
