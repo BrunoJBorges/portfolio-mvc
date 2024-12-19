@@ -24,7 +24,16 @@ const login = async (req, res) => {
     // Gera um token JWT para o aluno
     const token = jwt.sign({ id: aluno.id, nome: aluno.nome }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    return res.json({ message: 'Login bem-sucedido', token });
+    // Passando o tipo de menu de acordo com o nome
+    const tipoMenu = nome === 'Admin' ? 'admin' : 'aluno';
+    
+    return res.json({
+      nome: aluno.nome,
+      message: 'Login bem-sucedido',
+      token,
+      tipoMenu 
+    });
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Erro interno do servidor' });

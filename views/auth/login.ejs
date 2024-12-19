@@ -1,0 +1,54 @@
+<h1>Login</h1>
+
+<form action="/auth/login" method="POST" onsubmit="handleLogin(event)">
+  <div>
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" required>
+  </div>
+  <br>
+  <div>
+    <label for="senha">Senha:</label>
+    <input type="password" id="senha" name="senha" required>
+  </div>
+  <br>
+  <button type="submit">Entrar</button>
+</form>
+
+<p id="error" style="color: red;"></p>
+
+<script>
+  async function handleLogin(event) {
+  event.preventDefault();
+  
+  const nome = document.getElementById('nome').value;
+  const senha = document.getElementById('senha').value;
+
+  try {
+    const response = await fetch('/login', { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ nome, senha })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      document.getElementById('error').textContent = data.message;
+    } else {
+      // Armazena o token no localStorage
+      localStorage.setItem('token', data.token);
+
+      // Redireciona de acordo com o tipo de menu
+      if (data.tipoMenu === 'admin') {
+        window.location.href = '/admin/dashboard'; // ou outra página de admin
+      } else {
+        window.location.href = '/aluno/dashboard'; // ou outra página de aluno
+      }
+    }
+  } catch (error) {
+    document.getElementById('error').textContent = 'Erro ao fazer login.';
+  }
+}
+</script>

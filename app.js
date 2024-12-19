@@ -10,8 +10,10 @@ const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/alunos', alunoRoutes); // Rotas de aluno
+app.use('/login', alunoRoutes); // Rotas de aluno
 app.use('/projetos', projetoRoutes); // Rotas de projeto
 app.use('/conhecimentos', conhecimentoRoutes); // Rotas de conhecimento
 app.use('/admin', adminRoutes); // Rotas de administrador

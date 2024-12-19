@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu Principal</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    h1 {
+      text-align: center;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      margin: 10px 0;
+    }
+    a {
+      text-decoration: none;
+      color: white;
+      background-color: #007BFF;
+      padding: 10px 20px;
+      border-radius: 5px;
+      display: inline-block;
+    }
+    a:hover {
+      background-color: #0f1011;
+    }
+    form {
+      margin-top: 20px;
+    }
+    select {
+      padding: 10px;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #218838;
+    }
+  </style>
+</head>
+<body>
+  <h1>Menu Principal</h1>
+  <ul>
+    <li><a href="/login">Login</a></li>
+    <li><a href="/projetos">Visualizar todos os projetos</a></li>
+    <li><a href="/conhecimentos/relatorio">Relatório de conhecimentos</a></li>
+    <li>
+      <h2>Projetos por palavra-chave</h2>
+      <form id="keywordForm">
+        <select id="keywordSelect" name="palavraChave" required>
+          <option value="" disabled selected>Selecione uma palavra-chave</option>
+          <% if (palavrasChave.length > 0) { %>
+            <% palavrasChave.forEach(palavra => { %>
+              <option value="<%= palavra.nome %>"><%= palavra.nome %></option>
+            <% }) %>
+          <% } %>
+        </select>
+        <button type="submit">Gerar relatório</button>
+      </form>
+    </li>
+  </ul>
+
+  <script>
+    document.getElementById('keywordForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const selectedKeyword = document.getElementById('keywordSelect').value;
+      if (selectedKeyword) {
+        window.location.href = `/projetos/palavras-chave/${encodeURIComponent(selectedKeyword)}`;
+      }
+    });
+  </script>
+</body>
+</html>
