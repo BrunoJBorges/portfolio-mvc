@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excluir Palavra-chave</title>
+</head>
+<body>
+  <h1>Excluir Palavra-chave</h1>
+
+  <ul id="palavrasChaveList"></ul>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <script>
+    // Função para carregar todas as palavras-chave cadastradas
+    async function carregarPalavrasChave() {
+      try {
+        const response = await fetch('/admin/palavras-chave', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao carregar palavras-chave');
+        }
+
+        const palavrasChave = await response.json();
+        const palavrasChaveList = document.getElementById('palavrasChaveList');
+
+        palavrasChave.forEach(palavraChave => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `Nome: ${palavraChave.nome} | ID: ${palavraChave.id}`;
+
+          const deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Excluir';
+          deleteButton.onclick = () => excluirPalavraChave(palavraChave.id);
+
+          listItem.appendChild(deleteButton);
+          palavrasChaveList.appendChild(listItem);
+        });
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+      }
+    }
+
+    // Função para excluir uma palavra-chave
+    async function excluirPalavraChave(palavraChaveId) {
+      try {
+        const response = await fetch(`/admin/palavras-chave/${palavraChaveId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Palavra-chave excluída com sucesso!';
+        document.getElementById('palavrasChaveList').innerHTML = ''; // Limpa a lista
+        carregarPalavrasChave(); // Recarrega a lista atualizada
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+      }
+    }
+
+    // Carrega a lista de palavras-chave ao carregar a página
+    window.onload = carregarPalavrasChave;
+  </script>
+
+  <br>
+  <a href="/admin/dashboard">Voltar para o Dashboard</a>
+</body>
+</html>

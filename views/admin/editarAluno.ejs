@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Aluno</title>
+</head>
+<body>
+  <h1>Editar Aluno</h1>
+
+  <form id="selecionarAlunoForm">
+    <label for="alunoSelect">Selecione um aluno:</label>
+    <select id="alunoSelect" required>
+      <option value="">-- Selecione um aluno --</option>
+    </select>
+    <button type="submit">Carregar Dados</button>
+  </form>
+
+  <br>
+
+  <form id="editarAlunoForm" style="display: none;">
+    <div>
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome" required>
+    </div>
+    <br>
+    <div>
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" name="senha">
+    </div>
+    <br>
+    <button type="submit">Salvar Alterações</button>
+  </form>
+
+  <p id="mensagem" style="color: red;"></p>
+
+  <br>
+  <a href="/admin/dashboard">Voltar ao Dashboard</a>
+
+  <script>
+    const token = localStorage.getItem('token');
+    let alunoIdSelecionado = null;
+
+    // Carregar lista de alunos no select
+    async function carregarAlunos() {
+      try {
+        const response = await fetch('/admin/alunos', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const alunos = await response.json();
+
+        if (!response.ok) {
+          document.getElementById('mensagem').textContent = alunos.message || 'Erro ao carregar alunos.';
+          return;
+        }
+
+        const select = document.getElementById('alunoSelect');
+        alunos.forEach(aluno => {
+          const option = document.createElement('option');
+          option.value = aluno.id;
+          option.textContent = `${aluno.nome} (ID: ${aluno.id})`;
+          select.appendChild(option);
+        });
+
+      } catch (error) {
+        document.getElementById('mensagem').textContent = 'Erro ao carregar a lista de alunos.';
+      }
+    }
+
+    // Evento para carregar dados do aluno selecionado
+    document.getElementById('selecionarAlunoForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+      alunoIdSelecionado = document.getElementById('alunoSelect').value;
+
+      if (!alunoIdSelecionado) {
+        document.getElementById('mensagem').textContent = 'Selecione um aluno válido.';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/alunos/${alunoIdSelecionado}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const aluno = await response.json();
+
+        if (!response.ok) {
+          document.getElementById('mensagem').textContent = aluno.message || 'Erro ao carregar dados do aluno.';
+          return;
+        }
+
+        document.getElementById('nome').value = aluno.nome;
+        document.getElementById('editarAlunoForm').style.display = 'block';
+        document.getElementById('mensagem').textContent = '';
+
+      } catch (error) {
+        document.getElementById('mensagem').textContent = 'Erro ao carregar os dados do aluno.';
+      }
+    });
+
+    // Evento para enviar a atualização do aluno
+    document.getElementById('editarAlunoForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const senha = document.getElementById('senha').value;
+
+      try {
+        const response = await fetch(`/admin/alunos/${alunoIdSelecionado}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome, senha })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          document.getElementById('mensagem').textContent = data.message || 'Erro ao atualizar aluno.';
+        } else {
+          document.getElementById('mensagem').style.color = 'green';
+          document.getElementById('mensagem').textContent = 'Aluno atualizado com sucesso!';
+          document.getElementById('editarAlunoForm').style.display = 'none';
+          document.getElementById('selecionarAlunoForm').reset();
+        }
+
+      } catch (error) {
+        document.getElementById('mensagem').textContent = 'Erro ao atualizar o aluno.';
+      }
+    });
+
+    // Carregar os alunos ao carregar a página
+    window.onload = carregarAlunos;
+  </script>
+</body>
+</html>

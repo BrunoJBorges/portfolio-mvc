@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Palavra-chave</title>
+</head>
+<body>
+  <h1>Editar Palavra-chave</h1>
+
+  <form id="editarPalavraChaveForm">
+    <label for="palavraChave">Selecione a Palavra-chave:</label>
+    <select id="palavraChave" required>
+      <option value="">Selecione uma palavra-chave</option>
+    </select>
+    <br><br>
+
+    <label for="novoNome">Novo Nome da Palavra-chave:</label>
+    <input type="text" id="novoNome" required disabled>
+    <br><br>
+
+    <button type="submit" id="salvarAlteracoes" disabled>Salvar Alterações</button>
+  </form>
+
+  <br>
+  <a href="/admin/dashboard">Voltar ao Dashboard</a>
+
+  <p id="mensagem" style="color: red;"></p>
+
+  <script>
+    // Carregar todas as palavras-chave no dropdown
+    async function carregarPalavrasChave() {
+      try {
+        const response = await fetch('/admin/palavras-chave');
+        const palavrasChave = await response.json();
+
+        const selectElement = document.getElementById('palavraChave');
+        palavrasChave.forEach(palavraChave => {
+          const option = document.createElement('option');
+          option.value = palavraChave.id;
+          option.textContent = palavraChave.nome;
+          selectElement.appendChild(option);
+        });
+      } catch (error) {
+        document.getElementById('mensagem').textContent = 'Erro ao carregar palavras-chave';
+      }
+    }
+
+    // Habilitar o campo de novo nome e o botão de salvar quando uma palavra-chave for selecionada
+    document.getElementById('palavraChave').addEventListener('change', function(event) {
+      const novoNomeInput = document.getElementById('novoNome');
+      const salvarButton = document.getElementById('salvarAlteracoes');
+
+      if (event.target.value) {
+        novoNomeInput.disabled = false;
+        salvarButton.disabled = false;
+      } else {
+        novoNomeInput.disabled = true;
+        salvarButton.disabled = true;
+      }
+    });
+
+    // Enviar a solicitação para editar a palavra-chave
+    document.getElementById('editarPalavraChaveForm').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const palavraChaveId = document.getElementById('palavraChave').value;  ;
+      const novoNome = document.getElementById('novoNome').value;
+
+      try {
+        const response = await fetch(`/admin/palavras-chave/${palavraChaveId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome: novoNome })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          document.getElementById('mensagem').textContent = 'Palavra-chave atualizada com sucesso!';
+          document.getElementById('mensagem').style.color = 'green';
+        } else {
+          document.getElementById('mensagem').textContent = data.message;
+        }
+      } catch (error) {
+        document.getElementById('mensagem').textContent = 'Erro ao editar palavra-chave';
+      }
+    });
+
+    // Carregar as palavras-chave quando a página carregar
+    window.onload = carregarPalavrasChave;
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excluir Aluno</title>
+</head>
+<body>
+  <h1>Excluir Aluno</h1>
+
+  <ul id="alunosList"></ul>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <script>
+    async function carregarAlunos() {
+      try {
+        const response = await fetch('/admin/alunos', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Erro ao carregar alunos');
+        }
+
+        const alunos = await response.json();
+        const alunosList = document.getElementById('alunosList');
+
+        alunos.forEach(aluno => {
+          const listItem = document.createElement('li');
+          listItem.textContent = `Nome: ${aluno.nome} | ID: ${aluno.id}`;
+
+          const deleteButton = document.createElement('button');
+          deleteButton.textContent = 'Excluir';
+          deleteButton.onclick = () => excluirAluno(aluno.id);
+
+          listItem.appendChild(deleteButton);
+          alunosList.appendChild(listItem);
+        });
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+      }
+    }
+
+    async function excluirAluno(alunoId) {
+      try {
+        const response = await fetch(`/admin/alunos/${alunoId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Aluno excluído com sucesso!';
+        document.getElementById('alunosList').innerHTML = ''; // Limpa a lista
+        carregarAlunos(); // Recarrega a lista atualizada
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+      }
+    }
+
+    // Carrega a lista de alunos ao carregar a página
+    window.onload = carregarAlunos;
+  </script>
+
+  <br>
+  <a href="/admin/dashboard">Voltar para o Dashboard</a>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Listar Alunos</title>
+</head>
+<body>
+  <h1>Lista de Alunos</h1>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Nome</th>
+      </tr>
+    </thead>
+    <tbody id="alunosTabela">
+    </tbody>
+  </table>
+
+  <p id="mensagem" style="color: red;"></p>
+
+  <br>
+  <a href="/admin/dashboard">Voltar ao Dashboard</a>
+
+  <script>
+    async function carregarAlunos() {
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch('/admin/alunos', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          document.getElementById('mensagem').textContent = data.message || 'Erro ao listar alunos.';
+          return;
+        }
+
+        const tabela = document.getElementById('alunosTabela');
+        data.forEach(aluno => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${aluno.id}</td>
+            <td>${aluno.nome}</td>
+          `;
+          tabela.appendChild(row);
+        });
+
+      } catch (error) {
+        document.getElementById('mensagem').textContent = 'Erro ao carregar a lista de alunos.';
+      }
+    }
+
+    // Carregar os alunos quando a página for carregada
+    window.onload = carregarAlunos;
+  </script>
+</body>
+</html>

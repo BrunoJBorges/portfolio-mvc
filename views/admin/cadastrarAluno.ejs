@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Aluno</title>
+</head>
+<body>
+  <h1>Cadastrar Aluno</h1>
+
+  <form id="formCadastrarAluno">
+    <div>
+      <label for="nome">Nome:</label>
+      <input type="text" id="nome" name="nome" required>
+    </div>
+    <br>
+    <div>
+      <label for="senha">Senha:</label>
+      <input type="password" id="senha" name="senha" required>
+    </div>
+    <br>
+    <button type="submit">Salvar</button>
+  </form>
+
+  <p id="mensagem" style="color: red;"></p>
+
+  <script>
+    document.getElementById('formCadastrarAluno').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const senha = document.getElementById('senha').value;
+      const token = localStorage.getItem('token');
+
+      try {
+        const response = await fetch('/admin/alunos', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ nome, senha })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          document.getElementById('mensagem').textContent = data.message || 'Erro ao cadastrar aluno.';
+        } else {
+          document.getElementById('mensagem').style.color = 'green';
+          document.getElementById('mensagem').textContent = 'Aluno cadastrado com sucesso!';
+          document.getElementById('formCadastrarAluno').reset();
+        }
+      } catch (error) {
+        document.getElementById('mensagem').textContent = 'Erro ao cadastrar aluno.';
+      }
+    });
+  </script>
+
+  <br>
+  <a href="/admin/dashboard">Voltar ao Dashboard</a>
+</body>
+</html>

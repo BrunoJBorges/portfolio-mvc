@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Palavra-chave</title>
+</head>
+<body>
+  <h1>Cadastrar Palavra-chave</h1>
+
+  <form id="formCadastrarPalavraChave">
+    <div>
+      <label for="nome">Nome da Palavra-chave:</label>
+      <input type="text" id="nome" name="nome" required>
+    </div>
+    <br>
+    <button type="submit">Salvar</button>
+  </form>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <br>
+  <a href="/admin/dashboard">Voltar para o Dashboard</a>
+
+  <script>
+    document.getElementById('formCadastrarPalavraChave').addEventListener('submit', async function(event) {
+      event.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+
+      try {
+        const response = await fetch('/admin/palavras-chave', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Palavra-chave cadastrada com sucesso!';
+        document.getElementById('error').textContent = '';
+        document.getElementById('formCadastrarPalavraChave').reset();
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+        document.getElementById('message').textContent = '';
+      }
+    });
+  </script>
+</body>
+</html>
