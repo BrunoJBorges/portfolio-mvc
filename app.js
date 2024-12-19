@@ -5,6 +5,8 @@ const alunoRoutes = require('./routes/alunoRoutes');
 const projetoRoutes = require('./routes/projetoRoutes');
 const conhecimentoRoutes = require('./routes/conhecimentoRoutes');
 const adminRoutes = require('./routes/adminRoutes')
+const dashboardRoutes = require('./routes/dashboard')
+
 
 const app = express();
 
@@ -17,6 +19,7 @@ app.use('/login', alunoRoutes); // Rotas de aluno
 app.use('/projetos', projetoRoutes); // Rotas de projeto
 app.use('/conhecimentos', conhecimentoRoutes); // Rotas de conhecimento
 app.use('/admin', adminRoutes); // Rotas de administrador
+app.use('/', dashboardRoutes);
 
 // Função para criar o usuário administrador se não existir
 const criarAdmin = async () => {

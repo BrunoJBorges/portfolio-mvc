@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+</head>
+<body>
+  <h1>Bem-vindo ao Dashboard</h1>
+
+  <p>Logado no sistema como: <%= nome %></p>
+
+  <nav>
+    <% if (tipoMenu === 'admin') { %>
+      <ul>
+        <h2><strong>Alunos</strong></h2>
+        <li><a href="/admin/cadastrarAluno">Cadastrar aluno</a></li>
+        <li><a href="/admin/listarAlunos">Listar alunos</a></li>
+        <li><a href="/admin/editarAluno">Editar aluno</a></li>
+        <li><a href="/admin/excluir">Excluir aluno</a></li>
+
+        <h2><strong>Palavra-chave</strong></h2>
+        <li><a href="/admin/cadastrarPalavraschave">Cadastrar palavra-chave</a></li>
+        <li><a href="/admin/listarPalavrasChave">Listar palavras-chave</a></li>
+        <li><a href="/admin/editarPalavrasChave">Editar palavra-chave</a></li>
+        <li><a href="/admin/excluirPalavrasChave">Excluir palavra-chave</a></li>
+
+        <h2><strong>Conhecimento</strong></h2>
+        <li><a href="/admin/cadastrarConhecimentos">Cadastrar conhecimento</a></li>
+        <li><a href="/admin/listarConhecimentos">Listar conhecimentos</a></li>
+        <li><a href="/admin/editarConhecimentos">Editar conhecimento</a></li>
+        <li><a href="/admin/excluirConhecimentos">Excluir conhecimento</a></li>
+
+      </ul>
+    <% } else { %>
+      <ul>
+        <h2><strong>Projetos</strong></h2>
+        <li><a href="/aluno/cadastrarProjetos">Cadastrar projeto</a></li>
+        <li><a href="/aluno/projetos">Editar projeto</a></li>
+        <li><a href="/aluno/projetos">Excluir projeto</a></li>
+        <li><a href="/aluno/projetos">Adicionar desenvolvedor projeto</a></li>
+
+
+        <h2><strong>Conhecimento</strong></h2>
+        <li><a href="/aluno/cadastrarConhecimentos">Cadastrar conhecimento</a></li>
+        <li><a href="/aluno/editarConhecimentos">Editar conhecimento</a></li>
+        <li><a href="/aluno/excluirConhecimentos">Excluir conhecimento</a></li>
+      </ul>
+    <% } %>
+  </nav>
+  
+  <br>
+  <button onclick="logout()">Sair</button>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+  </script>
+</body>
+</html>
