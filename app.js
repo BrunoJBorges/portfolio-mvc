@@ -6,7 +6,7 @@ const projetoRoutes = require('./routes/projetoRoutes');
 const conhecimentoRoutes = require('./routes/conhecimentoRoutes');
 const adminRoutes = require('./routes/adminRoutes')
 const dashboardRoutes = require('./routes/dashboard')
-
+const alunoRoutes2 = require('./routes/alunoRoutes2')
 
 const app = express();
 
@@ -16,6 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use('/login', alunoRoutes); // Rotas de aluno
+app.use('/aluno', alunoRoutes2);
 app.use('/projetos', projetoRoutes); // Rotas de projeto
 app.use('/conhecimentos', conhecimentoRoutes); // Rotas de conhecimento
 app.use('/admin', adminRoutes); // Rotas de administrador

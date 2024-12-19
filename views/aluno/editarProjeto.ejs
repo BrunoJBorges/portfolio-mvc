@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Projeto</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+
+    form {
+      max-width: 400px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      margin: 10px 0 5px;
+      font-weight: bold;
+    }
+
+    input, textarea, button {
+      margin-bottom: 15px;
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    p {
+      text-align: center;
+    }
+
+    a {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #007BFF;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <h1 style="text-align: center;">Editar Projeto</h1>
+
+  <form id="editProjetoForm">
+    <label for="projetoId">ID do Projeto:</label>
+    <input type="text" id="projetoId" name="projetoId" required>
+
+    <label for="nome">Nome do Projeto:</label>
+    <input type="text" id="nome" name="nome" required>
+
+    <label for="resumo">Resumo:</label>
+    <textarea id="resumo" name="resumo" rows="4" required></textarea>
+
+    <label for="linkExterno">Link Externo:</label>
+    <input id="linkExterno" name="linkExterno">
+
+    <label for="palavrasChave">Palavras-chave (IDs separados por vírgula):</label>
+    <input type="text" id="palavrasChave" name="palavrasChave">
+
+    <button type="submit">Atualizar Projeto</button>
+  </form>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <a href="/aluno/dashboard">Voltar para o Dashboard</a>
+
+  <script>
+    document.getElementById('editProjetoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const projetoId = document.getElementById('projetoId').value;
+      const nome = document.getElementById('nome').value;
+      const resumo = document.getElementById('resumo').value;
+      const linkExterno = document.getElementById('linkExterno').value;
+      const palavrasChave = document.getElementById('palavrasChave').value.split(',').map(id => id.trim());
+
+      try {
+        const response = await fetch(`/projetos/${projetoId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({ nome, resumo, linkExterno, palavrasChave })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Projeto atualizado com sucesso!';
+        document.getElementById('error').textContent = '';
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+        document.getElementById('message').textContent = '';
+      }
+    });
+  </script>
+</body>
+</html>

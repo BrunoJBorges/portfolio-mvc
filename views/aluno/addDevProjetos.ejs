@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adicionar Desenvolvedor ao Projeto</title>
+</head>
+<body>
+  <h1>Adicionar Desenvolvedor ao Projeto</h1>
+
+  <form id="addDevForm">
+    <label for="projetoId">ID do Projeto:</label><br>
+    <input type="text" id="projetoId" placeholder="Digite o ID do projeto" required><br><br>
+
+    <label for="alunoId">ID do Aluno:</label><br>
+    <input type="text" id="alunoId" placeholder="Digite o ID do aluno" required><br><br>
+
+    <button type="button" onclick="adicionarDesenvolvedor()">Adicionar Desenvolvedor</button>
+  </form>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <script>
+    // Função para adicionar um desenvolvedor ao projeto
+    async function adicionarDesenvolvedor() {
+      const projetoId = document.getElementById('projetoId').value.trim();
+      const alunoId = document.getElementById('alunoId').value.trim();
+
+      if (!projetoId || !alunoId) {
+        document.getElementById('error').textContent = 'Por favor, preencha todos os campos.';
+        return;
+      }
+
+      try {
+        const response = await fetch('/projetos/adicionar-desenvolvedor', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({ projetoId, alunoId })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Desenvolvedor adicionado com sucesso!';
+        document.getElementById('error').textContent = '';
+        document.getElementById('addDevForm').reset(); // Limpa o formulário
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+        document.getElementById('message').textContent = '';
+      }
+    }
+  </script>
+
+  <br>
+  <a href="/aluno/dashboard">Voltar para o Dashboard</a>
+</body>
+</html>

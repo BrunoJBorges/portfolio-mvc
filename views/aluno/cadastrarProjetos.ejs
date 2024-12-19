@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Projeto</title>
+</head>
+<body>
+  <h1>Cadastrar Projeto</h1>
+
+  <form id="projetoForm">
+    <label for="nome">Nome do Projeto:</label><br>
+    <input type="text" id="nome" name="nome" required><br><br>
+
+    <label for="resumo">Resumo:</label><br>
+    <textarea id="resumo" name="resumo" required></textarea><br><br>
+
+    <label for="linkExterno">Link Externo:</label><br>
+    <input id="linkExterno" name="linkExterno"><br><br>
+
+    <label for="palavrasChave">Palavras-chave (IDs separados por vírgula):</label><br>
+    <input type="text" id="palavrasChave" name="palavrasChave"><br><br>
+
+    <button type="submit">Cadastrar</button>
+  </form>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <br>
+  <a href="/aluno/dashboard">Voltar para o Dashboard</a>
+
+  <script>
+    document.getElementById('projetoForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const nome = document.getElementById('nome').value;
+      const resumo = document.getElementById('resumo').value;
+      const linkExterno = document.getElementById('linkExterno').value;
+      const palavrasChaveInput = document.getElementById('palavrasChave').value;
+
+      // Converte a string de IDs em um array (se houver)
+      const palavrasChave = palavrasChaveInput ? palavrasChaveInput.split(',').map(id => id.trim()) : [];
+
+      try {
+        const response = await fetch('/projetos', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ nome, resumo, linkExterno, palavrasChave })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Projeto cadastrado com sucesso!';
+        document.getElementById('error').textContent = '';
+        document.getElementById('projetoForm').reset();
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+        document.getElementById('message').textContent = '';
+      }
+    });
+  </script>
+</body>
+</html>

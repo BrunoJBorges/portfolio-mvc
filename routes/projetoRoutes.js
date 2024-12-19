@@ -19,6 +19,8 @@ router.post('/adicionar-desenvolvedor', authMiddleware, adicionarDesenvolvedor);
 router.get('/', listarProjetos);
 router.get('/palavras-chave/:nome', listarProjetosPorPalavraChave);
 
+////// ROTAS DE RENDERIZAÇÃO ////// 
+
 // Rota principal para exibir a view de menu com palavras-chave dinâmicas
 router.get('/menu', async (req, res) => {
      try {

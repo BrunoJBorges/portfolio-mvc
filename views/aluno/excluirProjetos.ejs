@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excluir Projeto</title>
+</head>
+<body>
+  <h1>Excluir Projeto</h1>
+
+  <label for="projetoId">ID do Projeto:</label>
+  <input type="text" id="projetoId" placeholder="Digite o ID do projeto">
+  <br><br>
+  <button onclick="excluirProjeto()">Excluir Projeto</button>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <script>
+    // Função para excluir o projeto com o ID fornecido
+    async function excluirProjeto() {
+      const projetoId = document.getElementById('projetoId').value.trim();
+
+      if (!projetoId) {
+        document.getElementById('error').textContent = 'Por favor, insira o ID do projeto.';
+        return;
+      }
+
+      try {
+        const response = await fetch(`/projetos/${projetoId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Projeto excluído com sucesso!';
+        document.getElementById('error').textContent = '';
+        document.getElementById('projetoId').value = ''; // Limpa o campo de texto
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+        document.getElementById('message').textContent = '';
+      }
+    }
+  </script>
+
+  <br>
+  <a href="/aluno/dashboard">Voltar para o Dashboard</a>
+</body>
+</html>
