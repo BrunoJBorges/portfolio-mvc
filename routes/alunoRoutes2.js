@@ -18,4 +18,16 @@ router.get('/addDevProjetos', (req, res) => {
     res.render('aluno/addDevProjetos'); 
 });
 
+router.get('/cadastrarConhecimentos', (req, res) => {
+    res.render('aluno/cadastrarConhecimentos'); 
+});
+
+router.get('/editarConhecimentos', (req, res) => {
+    res.render('aluno/editarConhecimentos'); 
+});
+
+router.get('/excluirConhecimentos', (req, res) => {
+    res.render('aluno/excluirConhecimentos'); 
+});
+
 module.exports = router;

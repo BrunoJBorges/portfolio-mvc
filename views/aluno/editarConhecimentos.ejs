@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Conhecimentos</title>
+</head>
+<body>
+  <h1>Editar Conhecimentos</h1>
+
+  <form id="editarConhecimentosForm">
+    <label for="alunoId">ID do Aluno:</label><br>
+    <input type="text" id="alunoId" placeholder="Digite o ID do aluno" required><br><br>
+
+    <label for="nomeConhecimento">Nome do Conhecimento:</label><br>
+    <input type="text" id="nomeConhecimento" placeholder="Digite o nome do conhecimento" required><br><br>
+
+    <label for="nivelConhecimento">Nível do Conhecimento:</label><br>
+    <input type="text" id="nivelConhecimento" placeholder="Digite o nível do conhecimento" required><br><br>
+
+    <button type="button" onclick="adicionarConhecimento()">Adicionar Conhecimento</button>
+    <button type="button" onclick="editarConhecimentos()">Editar Conhecimentos</button>
+  </form>
+
+  <h3>Lista de Conhecimentos a Atualizar:</h3>
+  <ul id="conhecimentosList"></ul>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <script>
+    let conhecimentos = [];
+
+    // Função para adicionar um conhecimento à lista temporária
+    function adicionarConhecimento() {
+      const nome = document.getElementById('nomeConhecimento').value.trim();
+      const nivel = document.getElementById('nivelConhecimento').value.trim();
+
+      if (!nome || !nivel) {
+        document.getElementById('error').textContent = 'Por favor, preencha todos os campos.';
+        return;
+      }
+
+      conhecimentos.push({ nome, nivel });
+
+      // Atualiza a lista na tela
+      const conhecimentosList = document.getElementById('conhecimentosList');
+      const listItem = document.createElement('li');
+      listItem.textContent = `Nome: ${nome}, Nível: ${nivel}`;
+      conhecimentosList.appendChild(listItem);
+
+      // Limpa os campos
+      document.getElementById('nomeConhecimento').value = '';
+      document.getElementById('nivelConhecimento').value = '';
+      document.getElementById('error').textContent = '';
+    }
+
+    // Função para enviar os conhecimentos atualizados ao servidor
+    async function editarConhecimentos() {
+      const alunoId = document.getElementById('alunoId').value.trim();
+
+      if (!alunoId || conhecimentos.length === 0) {
+        document.getElementById('error').textContent = 'Por favor, preencha o ID do aluno e adicione pelo menos um conhecimento.';
+        return;
+      }
+
+      try {
+        const response = await fetch('/conhecimentos/editar', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}` // Se precisar de autenticação
+          },
+          body: JSON.stringify({ alunoId, conhecimentos })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Conhecimentos atualizados com sucesso!';
+        document.getElementById('error').textContent = '';
+        document.getElementById('editarConhecimentosForm').reset();
+        document.getElementById('conhecimentosList').innerHTML = '';
+        conhecimentos = [];
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+        document.getElementById('message').textContent = '';
+      }
+    }
+  </script>
+
+  <br>
+  <a href="/aluno/dashboard">Voltar para o Dashboard</a>
+</body>
+</html>

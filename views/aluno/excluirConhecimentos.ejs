@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excluir Conhecimento</title>
+</head>
+<body>
+  <h1>Excluir Conhecimento</h1>
+
+  <form id="deleteForm">
+    <div>
+      <label for="alunoId">Código do Aluno:</label>
+      <input type="text" id="alunoId" name="alunoId" required />
+    </div>
+    <div>
+      <label for="conhecimentoId">ID do Conhecimento:</label>
+      <input type="text" id="conhecimentoId" name="conhecimentoId" required />
+    </div>
+    <button type="submit">Excluir</button>
+  </form>
+
+  <p id="message" style="color: green;"></p>
+  <p id="error" style="color: red;"></p>
+
+  <br>
+  <a href="/aluno/dashboard">Voltar para o Dashboard</a>
+
+  <script>
+    document.getElementById('deleteForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const alunoId = document.getElementById('alunoId').value;
+      const conhecimentoId = document.getElementById('conhecimentoId').value;
+
+      try {
+        const response = await fetch('/conhecimentos/excluir', {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ alunoId, conhecimentoId })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.message);
+        }
+
+        document.getElementById('message').textContent = 'Conhecimento excluído com sucesso!';
+        document.getElementById('deleteForm').reset(); // Limpa o formulário
+      } catch (error) {
+        document.getElementById('error').textContent = error.message;
+      }
+    });
+  </script>
+</body>
+</html>
